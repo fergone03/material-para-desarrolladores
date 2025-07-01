@@ -324,8 +324,7 @@ const Dashboard = () => {
       msg = 'Error desconocido (error es null o undefined)';
     }
     alert('Error saving page: ' + msg);
-      [name]: value
-    }));
+  }
   };
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
