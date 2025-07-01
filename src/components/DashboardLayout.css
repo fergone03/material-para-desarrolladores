@@ -1,0 +1,16 @@
+.page-action-buttons .edit-btn:hover {
+  background: #008cba !important;
+  color: #fff !important;
+  border-color: #008cba !important;
+}
+.page-action-buttons .edit-btn:hover svg {
+  color: #fff !important;
+}
+.page-action-buttons .delete-btn:hover {
+  background: #dc3545 !important;
+  color: #fff !important;
+  border-color: #dc3545 !important;
+}
+.page-action-buttons .delete-btn:hover svg {
+  color: #fff !important;
+}

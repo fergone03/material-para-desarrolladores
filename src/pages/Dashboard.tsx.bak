@@ -1,0 +1,524 @@
+import { useEffect, useState } from 'react';
+import { Button, Form, Modal } from 'react-bootstrap';
+import { FaPlus, FaEdit, FaTrash, FaExternalLinkAlt, FaLock } from 'react-icons/fa';
+import DashboardLayout from '../components/DashboardLayout';
+import type { Page, Category, User } from '../types';
+import { User as SupabaseUser } from '@supabase/supabase-js';
+import type { User } from '@supabase/supabase-js';
+
+type Category = { id: string; name: string };
+type Page = {
+  id: string;
+  title: string;
+  url: string;
+  description: string | null;
+  category_id: string | null;
+  category?: Category;
+  is_common: boolean;
+};
+
+const Dashboard = () => {
+  const [user, setUser] = useState<User | null>(null);
+  const [role, setRole] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [pages, setPages] = useState<Page[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>('all');
+  const [editingPage, setEditingPage] = useState<Page | null>(null);
+  const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState<{
+    title: string;
+    url: string;
+    description: string;
+    category_id: string | null;
+    is_common: boolean;
+  }>({
+    title: '',
+    url: '',
+    description: '',
+    category_id: null,
+    is_common: role === 'admin'
+  });
+
+  // Remove unused navigate since we're not navigating programmatically right now
+  // const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("categories")
+      .select("*")
+      .order("name");
+    if (error) console.error(error);
+    else setCategories(data || []);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    async function fetchUser() {
+      const { data } = await supabase.auth.getUser();
+      if (data.user) {
+        setUser(data.user);
+
+        const { data: profileData, error } = await supabase
+          .from("profiles")
+          .select("role")
+          .eq("id", data.user.id)
+          .single();
+
+        if (error) {
+          console.error(error);
+          setRole(null);
+        } else {
+          setRole(profileData?.role || null);
+        }
+      } else {
+        setUser(null);
+        setRole(null);
+      }
+      setLoading(false);
+    }
+    fetchUser();
+  }, []);
+
+  useEffect(() => {
+    async function fetchPages() {
+      setLoading(true);
+      try {
+        const { data: publicPages, error: publicError } = await supabase
+          .from("pages")
+          .select("*, category:category_id(name)")
+          .eq("is_common", true)
+          .order("title");
+
+        if (publicError) throw publicError;
+
+        let userPages: Page[] = [];
+
+        if (user) {
+          const { data: userPagesData, error: userPagesError } = await supabase
+            .from("user_pages")
+            .select(`page:page_id(*, category:category_id(name))`)
+            .eq("user_id", user.id);
+
+          if (userPagesError) throw userPagesError;
+
+          userPages = userPagesData?.map((item: any) => item.page) || [];
+        }
+
+        const combinedPages = [...publicPages!, ...userPages].filter(
+          (page, index, self) =>
+            self.findIndex((p) => p.id === page.id) === index
+        );
+
+        combinedPages.sort((a, b) => a.title.localeCompare(b.title));
+
+        setPages(combinedPages);
+      } catch (error) {
+        console.error("Error cargando páginas:", error);
+        setPages([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchPages();
+  }, [user]);
+
+  // Handle category selection
+  const handleCategorySelect = (categoryId: string) => {
+    setSelectedCategory(categoryId);
+  };
+
+  // Handle page edit
+  const handleEditPage = (page: any) => {
+    setEditingPage(page);
+    setFormData({
+      title: page.title,
+      url: page.url,
+      description: page.description || '',
+      category_id: page.category_id || '',
+      is_common: page.is_common
+    });
+    setShowForm(true);
+  };
+
+  // Handle page deletion
+  const handleDeletePage = async (pageId: string, isCommon: boolean) => {
+    if (!confirm('Are you sure you want to delete this page?')) return;
+
+    try {
+      if (isCommon && role !== 'admin') {
+        alert('Only admins can delete common pages');
+        return;
+      }
+
+      if (isCommon || role === 'admin') {
+        // Delete the page
+        const { error } = await supabase
+          .from('pages')
+          .delete()
+          .eq('id', pageId);
+
+        if (error) throw error;
+      } else {
+        // Remove user-page association
+        const { error } = await supabase
+          .from('user_pages')
+          .delete()
+          .eq('page_id', pageId)
+          .eq('user_id', user?.id);
+
+        if (error) throw error;
+      }
+
+      // Update local state
+      setPages(pages.filter(p => p.id !== pageId));
+    } catch (error) {
+      console.error('Error deleting page:', error);
+      alert('Failed to delete page');
+    }
+  };
+
+  const handleSubmit = async (event: any) => {
+    event.preventDefault();
+
+    try {
+      if (editingPage) {
+        // Update existing page
+        const { data, error } = await supabase
+          .from('pages')
+          .update({
+            title: formData.title,
+            url: formData.url,
+            description: formData.description,
+            category_id: formData.category_id,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', editingPage.id)
+          .select()
+          .single();
+
+        if (error) throw error;
+
+        // Update local state
+        setPages(pages.map(p => p.id === data.id ? { ...p, ...data } : p));
+      } else {
+        // Create new page
+        const { data, error } = await supabase
+          .from('pages')
+          .insert([
+            {
+              ...formData,
+              is_common: role === 'admin',
+              created_by: role === 'admin' ? user?.id : undefined
+            }
+          ])
+          .select()
+          .single();
+
+        if (error) throw error;
+
+        if (role !== 'admin' && user?.id) {
+          // Link to user for private pages
+          const { error: linkError } = await supabase
+            .from('user_pages')
+            .insert([{ user_id: user.id, page_id: data.id }]);
+
+          if (linkError) throw linkError;
+        }
+
+        // Update local state
+        setPages([...pages, data]);
+      }
+
+      setShowForm(false);
+      setEditingPage(null);
+      setFormData({
+        title: '',
+        url: '',
+        description: '',
+        category_id: '',
+        is_common: false
+      });
+    } catch (error) {
+      console.error('Error saving page:', error);
+      alert('Failed to save page');
+    }
+  };
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = event.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value === '' ? null : value
+    }));
+  };
+
+  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, checked } = event.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: checked
+    }));
+  };
+
+  const filteredPages = selectedCategory === 'all' 
+    ? pages 
+    : pages.filter(page => page.category_id === selectedCategory);
+    
+  // Ensure we have a valid form state when the role changes
+  useEffect(() => {
+    if (role) {
+      setFormData(prev => ({
+        ...prev,
+        is_common: role === 'admin' && Boolean(prev.is_common)
+      }));
+    }
+  }, [role]);
+
+  if (loading) {
+    return (
+      <div className="text-center py-5">
+        <div className="spinner-border" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="dashboard-container p-3">
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h1 className="mb-0">Dashboard</h1>
+        <Button 
+          variant="primary" 
+          onClick={() => {
+            setEditingPage(null);
+            setFormData({
+              title: '',
+              url: '',
+              description: '',
+              category_id: '',
+              is_common: role === 'admin'
+            });
+            setShowForm(true);
+          }}
+          className="d-flex align-items-center"
+        >
+          <FaPlus className="me-2" /> Add Page
+        </Button>
+      </div>
+
+      <DashboardLayout
+        pages={filteredPages}
+        categories={categories}
+        selectedCategory={selectedCategory}
+        onCategorySelect={handleCategorySelect}
+        onEditPage={handleEditPage}
+        onDeletePage={handleDeletePage}
+        loading={loading}
+      />
+
+      {/* Add/Edit Page Modal */}
+      <Modal show={showForm} onHide={() => setShowForm(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>{editingPage ? 'Edit Page' : 'Add New Page'}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={handleSubmit}>
+            <Form.Group className="mb-3">
+              <Form.Label>Title *</Form.Label>
+              <Form.Control
+                type="text"
+                name="title"
+                value={formData.title}
+                onChange={handleInputChange}
+                required
+              />
+            </Form.Group>
+            
+            <Form.Group className="mb-3">
+              <Form.Label>URL *</Form.Label>
+              <Form.Control
+                type="url"
+                name="url"
+                value={formData.url}
+                onChange={handleInputChange}
+                required
+              />
+            </Form.Group>
+            
+            <Form.Group className="mb-3">
+              <Form.Label>Description</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                name="description"
+                value={formData.description}
+                onChange={handleInputChange}
+              />
+            </Form.Group>
+            
+            <Form.Group className="mb-3">
+              <Form.Label>Category</Form.Label>
+              <Form.Select
+                name="category_id"
+                value={formData.category_id || ''}
+                onChange={handleInputChange}
+              >
+                <option value="">Select category</option>
+                {categories.map(category => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
+            
+            {(role === 'admin' || !editingPage) && (
+              <Form.Group className="mb-3">
+                <Form.Check
+                  type="checkbox"
+                  label="Common page (visible to all users)"
+                  name="is_common"
+                  checked={formData.is_common}
+                  onChange={handleCheckboxChange}
+                  disabled={role !== 'admin' && editingPage?.is_common}
+                />
+              </Form.Group>
+            )}
+            
+            <div className="d-flex justify-content-end gap-2">
+              <Button variant="secondary" onClick={() => setShowForm(false)}>
+                Cancel
+              </Button>
+              <Button variant="primary" type="submit">
+                {editingPage ? 'Save Changes' : 'Add Page'}
+              </Button>
+            </div>
+          </Form>
+        </Modal.Body>
+      </Modal>
+    </div>
+  );
+}
+  <div className="dashboard-container">
+    <div className="d-flex justify-content-between align-items-center mb-4">
+      <h1 className="mb-0">Dashboard</h1>
+      <Button 
+        variant="primary" 
+        onClick={() => {
+          setEditingPage(null);
+          setFormData({
+            title: '',
+            url: '',
+            description: '',
+            category_id: null,
+            is_common: role === 'admin'
+          });
+          setShowForm(true);
+        }}
+        className="d-flex align-items-center"
+      >
+        <FaPlus className="me-2" /> Add Page
+      </Button>
+    </div>
+
+    <DashboardLayout
+      pages={filteredPages}
+      categories={categories}
+      selectedCategory={selectedCategory}
+      onCategorySelect={handleCategorySelect}
+      onEditPage={handleEditPage}
+      onDeletePage={handleDeletePage}
+      loading={loading}
+    />
+
+    {/* Add/Edit Page Modal */}
+    <Modal show={showForm} onHide={() => setShowForm(false)}>
+      <Modal.Header closeButton>
+        <Modal.Title>{editingPage ? 'Edit Page' : 'Add New Page'}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form onSubmit={handleSubmit}>
+          <Form.Group className="mb-3">
+            <Form.Label>Title *</Form.Label>
+            <Form.Control
+              type="text"
+              name="title"
+              value={formData.title}
+              onChange={handleInputChange}
+              required
+            />
+          </Form.Group>
+          
+          <Form.Group className="mb-3">
+            <Form.Label>URL *</Form.Label>
+            <Form.Control
+              type="url"
+              name="url"
+              value={formData.url}
+              onChange={handleInputChange}
+              required
+            />
+          </Form.Group>
+          
+          <Form.Group className="mb-3">
+            <Form.Label>Description</Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={3}
+              name="description"
+              value={formData.description}
+              onChange={handleInputChange}
+            />
+          </Form.Group>
+          
+          <Form.Group className="mb-3">
+            <Form.Label>Category</Form.Label>
+            <Form.Select
+              name="category_id"
+              value={formData.category_id}
+              onChange={handleInputChange}
+            >
+              <option value="">Select category</option>
+              {categories.map(category => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+          
+          {(role === 'admin' || !editingPage) && (
+            <Form.Group className="mb-3">
+              <Form.Check
+                type="checkbox"
+                label="Common page (visible to all users)"
+                name="is_common"
+                checked={formData.is_common}
+                onChange={handleCheckboxChange}
+                disabled={role !== 'admin' && editingPage?.is_common}
+              />
+            </Form.Group>
+          )}
+          
+          <div className="d-flex justify-content-end gap-2">
+            <Button variant="secondary" onClick={() => setShowForm(false)}>
+              Cancel
+            </Button>
+            <Button variant="primary" type="submit">
+              {editingPage ? 'Save Changes' : 'Add Page'}
+            </Button>
+          </div>
+        </Form>
+      </Modal.Body>
+    </Modal>
+  </div>
+);
+
+export default Dashboard;
