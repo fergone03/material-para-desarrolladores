@@ -32,12 +32,8 @@ type DashboardLayoutProps = {
 };
 
 // Helper function to split array into chunks
-const chunkArray = (array, chunkSize) => {
-  const result = [];
-  for (let i = 0; i < array.length; i += chunkSize) {
-    result.push(array.slice(i, i + chunkSize));
-  }
-  return result;
+const chunkArray = <T,>(array: T[], chunkSize: number): T[][] => {
+  return Array(Math.ceil(array.length / chunkSize)).fill(null).map((_, i) => array.slice(i * chunkSize, i * chunkSize + chunkSize));
 };
 
 import { useState } from 'react';
@@ -200,13 +196,13 @@ export default function DashboardLayout(props: DashboardLayoutProps) {
 
       {/* Two-column layout for categories */}
       <div className="row g-3 g-md-4 mt-2 mt-md-4">
-        {categoryColumns.map((column, colIndex) => (
+        {categoryColumns.map((column: [string, Page[]][], colIndex: number) => (
           <div key={colIndex} className="col-12 col-md-6">
-            {column.map(([category, categoryPages]) => (
+            {column.map(([category, categoryPages]: [string, Page[]]) => (
               <div key={category} className="mb-5">
                 <h2 className="h4 mb-3 text-center">{category}</h2>
                 <div className="row g-3 g-md-4">
-                  {categoryPages.map((page) => (
+                  {categoryPages.map((page: Page) => (
                     <div key={page.id} className="col-12">
                       <Card className="h-100 shadow-sm">
                         <Card.Body className="d-flex flex-column">

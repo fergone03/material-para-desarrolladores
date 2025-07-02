@@ -2,8 +2,9 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
+import React from 'react';
 type Props = {
-  children: JSX.Element;
+  children: React.ReactNode;
 };
 
 const AdminRoute = ({ children }: Props) => {

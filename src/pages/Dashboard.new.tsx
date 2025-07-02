@@ -376,7 +376,7 @@ const Dashboard = () => {
       <DashboardLayout
         pages={filteredPages}
         categories={categories}
-        selectedCategory={selectedCategory}
+        selectedCategory={selectedCategory || ''}
         onCategorySelect={handleCategorySelect}
         onEditPage={handleEditPage}
         onDeletePage={handleDeletePage}

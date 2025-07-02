@@ -19,7 +19,7 @@ const UsersList: React.FC = () => {
   const fetchUsers = async () => {
     setLoading(true);
     const { data, error } = await supabase
-      .from<UserProfile>('profiles')
+      .from('profiles')
       .select('id, username, role')
       .order('username', { ascending: true });
     if (error) {

@@ -3,8 +3,8 @@ import React, {
   useContext,
   useEffect,
   useState,
-  ReactNode,
 } from "react";
+import type { ReactNode } from "react";
 import supabase from "../utils/supabase";
 
 type UserProfile = {
