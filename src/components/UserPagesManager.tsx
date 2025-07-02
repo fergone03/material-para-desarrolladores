@@ -24,7 +24,7 @@ interface Props {
   pageToEdit: Page | null;
 }
 
-const UserPagesManager: React.FC<Props> = ({ userId, showForm, setShowForm, onSave, pageToEdit }) => {
+const UserPagesManager: React.FC<Omit<Props, 'userId'>> = ({ showForm, setShowForm, onSave, pageToEdit }) => {
   const [title, setTitle] = useState('');
   const [url, setUrl] = useState('');
   const [description, setDescription] = useState('');

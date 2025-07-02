@@ -11,8 +11,7 @@ export default function Register() {
   const [repeatPassword, setRepeatPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showRepeat, setShowRepeat] = useState(false);
-  const [message, setMessage] = useState("");
-  const [passwordTouched, setPasswordTouched] = useState(false);
+
   const [repeatTouched, setRepeatTouched] = useState(false);
   const navigate = useNavigate();
 
@@ -104,7 +103,7 @@ export default function Register() {
               type={showPassword ? "text" : "password"}
               placeholder="Contraseña"
               value={password}
-              onChange={e => { setPassword(e.target.value); setPasswordTouched(true); }}
+              onChange={e => { setPassword(e.target.value); }}
               required
               className="form-control rounded-pill px-3 py-2"
               style={{ borderColor: '#b2ebf2', boxShadow: 'none', paddingRight: 40 }}

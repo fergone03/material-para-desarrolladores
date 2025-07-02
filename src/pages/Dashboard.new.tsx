@@ -9,6 +9,19 @@ import type { User } from '@supabase/supabase-js';
 const Dashboard = () => {
   // ...otros estados
 
+  // Generic handler for input changes
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value, type } = event.target;
+    let newValue: string | boolean = value;
+    if (type === 'checkbox' && 'checked' in event.target) {
+      newValue = (event.target as HTMLInputElement).checked;
+    }
+    setFormData(prev => ({
+      ...prev,
+      [name]: newValue
+    }));
+  };
+
   // Handler para borrar categoría
   const handleDeleteCategory = async (categoryId: string) => {
     if (role !== 'admin') {
