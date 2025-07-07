@@ -39,6 +39,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     } = await supabase.auth.getUser();
 
     if (error || !sessionUser) {
+      // Only log unexpected errors
+      if (error && !(
+        error.message &&
+        error.message.toLowerCase().includes('refresh token') &&
+        error.message.toLowerCase().includes('not found')
+      )) {
+        console.error("Supabase Auth Error:", error.message);
+      }
       setUser(null);
       setIsLoading(false);
       return;
