@@ -38,18 +38,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       error,
     } = await supabase.auth.getUser();
 
-    if (error || !sessionUser) {
-      // Only log unexpected errors
-      if (error && !(
-        error.message &&
-        error.message.toLowerCase().includes('refresh token') &&
-        error.message.toLowerCase().includes('not found')
-      )) {
-        console.error("Supabase Auth Error:", error.message);
-      }
+    // Gracefully handle no session
+    if (!sessionUser) {
       setUser(null);
       setIsLoading(false);
       return;
+    }
+
+    // Log unexpected errors only
+    if (
+      error &&
+      !["Auth session missing!", "Auth session not found", "Refresh token not found"].some((msg) =>
+        error.message.toLowerCase().includes(msg.toLowerCase())
+      )
+    ) {
+      console.error("Supabase Auth Error:", error.message);
     }
 
     const { data: profile, error: profileError } = await supabase
