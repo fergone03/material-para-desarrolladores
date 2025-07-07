@@ -33,7 +33,10 @@ type DashboardLayoutProps = {
 
 // Helper function to split array into chunks
 const chunkArray = <T,>(array: T[], chunkSize: number): T[][] => {
-  return Array(Math.ceil(array.length / chunkSize)).fill(null).map((_, i) => array.slice(i * chunkSize, i * chunkSize + chunkSize));
+  if (!chunkSize || chunkSize <= 0) return [array]; // fallback to single chunk
+  return Array(Math.ceil(array.length / chunkSize))
+    .fill(null)
+    .map((_, i) => array.slice(i * chunkSize, i * chunkSize + chunkSize));
 };
 
 import { useState } from 'react';
