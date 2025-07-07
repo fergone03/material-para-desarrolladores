@@ -7,6 +7,7 @@ import UsersList from "./components/UsersList";
 import AdminRoute from "./components/AdminRoute";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import AboutUs from "./pages/AboutUs";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
                 </AdminRoute>
               }
             />
+            <Route path="/about" element={<AboutUs />} />
           </Routes>
         </div>
         <Footer />

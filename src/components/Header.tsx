@@ -40,6 +40,7 @@ const Header: React.FC = () => {
         <ul className="d-none d-lg-flex align-items-center gap-3 mb-0" style={{listStyle: 'none'}}>
           <li><Link to="/" className="nav-link px-2" style={{ color: '#008cba' }}>Inicio</Link></li>
           <li><Link to="/dashboard" className="nav-link px-2" style={{ color: '#008cba' }}>Recursos</Link></li>
+          <li><Link to="/about" className="nav-link px-2" style={{ color: '#008cba' }}>Sobre nosotros</Link></li>
           {!user ? (
             <>
               <li><Link to="/login" className="nav-link px-2" style={{ color: '#008cba' }}>Login</Link></li>
@@ -86,6 +87,7 @@ const Header: React.FC = () => {
           <ul className="nav flex-column gap-3 mt-5">
             <li><Link to="/" className="nav-link" onClick={toggleMenu}>Inicio</Link></li>
             <li><Link to="/dashboard" className="nav-link" onClick={toggleMenu}>Dashboard</Link></li>
+            <li><Link to="/about" className="nav-link" onClick={toggleMenu}>About Us</Link></li>
             {!user ? (
               <>
                 <li><Link to="/login" className="nav-link" onClick={toggleMenu}>Login</Link></li>
