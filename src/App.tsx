@@ -8,6 +8,7 @@ import AdminRoute from "./components/AdminRoute";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import AboutUs from "./pages/AboutUs";
+import ForgotPassword from "./pages/ForgotPassword";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
               }
             />
             <Route path="/about" element={<AboutUs />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
           </Routes>
         </div>
         <Footer />

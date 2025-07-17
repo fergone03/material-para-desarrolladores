@@ -31,13 +31,6 @@ type DashboardLayoutProps = {
   onDeleteCategory?: (id: string) => Promise<any>;
 };
 
-// Helper function to split array into chunks
-const chunkArray = <T,>(array: T[], chunkSize: number): T[][] => {
-  if (!chunkSize || chunkSize <= 0) return [array]; // fallback to single chunk
-  return Array(Math.ceil(array.length / chunkSize))
-    .fill(null)
-    .map((_, i) => array.slice(i * chunkSize, i * chunkSize + chunkSize));
-};
 
 import { useState } from 'react';
 
@@ -76,9 +69,25 @@ export default function DashboardLayout(props: DashboardLayoutProps) {
     return acc;
   }, {} as Record<string, Page[]>);
 
-  // Split categories into two columns
-  const categoryEntries = Object.entries(pagesByCategory);
-  const categoryColumns = chunkArray(categoryEntries, Math.ceil(categoryEntries.length / 2));
+  // Ordenar categorías alfabéticamente
+  const categoryEntries = Object.entries(pagesByCategory).sort((a, b) => a[0].localeCompare(b[0]));
+
+  // Balancear las columnas por número total de páginas
+  function splitCategoriesBalanced(entries: [string, Page[]][], nCols: number = 2): [string, Page[]][][] {
+    const columns: [string, Page[]][][] = Array.from({ length: nCols }, () => []);
+    const colPageCounts = Array(nCols).fill(0);
+    for (const entry of entries) {
+      // Encuentra la columna menos cargada
+      let minIdx = 0;
+      for (let i = 1; i < nCols; i++) {
+        if (colPageCounts[i] < colPageCounts[minIdx]) minIdx = i;
+      }
+      columns[minIdx].push(entry);
+      colPageCounts[minIdx] += entry[1].length;
+    }
+    return columns;
+  }
+  const categoryColumns = splitCategoriesBalanced(categoryEntries, 2);
 
   if (loading) {
     return (

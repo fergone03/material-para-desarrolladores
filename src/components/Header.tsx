@@ -42,10 +42,14 @@ const Header: React.FC = () => {
           <li><Link to="/dashboard" className="nav-link px-2" style={{ color: '#008cba' }}>Recursos</Link></li>
           <li><Link to="/about" className="nav-link px-2" style={{ color: '#008cba' }}>Sobre nosotros</Link></li>
           {!user ? (
-            <>
-              <li><Link to="/login" className="nav-link px-2" style={{ color: '#008cba' }}>Login</Link></li>
-              <li><Link to="/register" className="nav-link px-2" style={{ color: '#008cba' }}>Registro</Link></li>
-            </>
+            <li>
+              <Link to="/login" className="nav-link px-2 d-flex align-items-center" style={{ color: '#008cba' }} title="Iniciar sesión">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 7.5a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5a7.5 7.5 0 1115 0v.75A2.25 2.25 0 0117.25 22.5h-10.5A2.25 2.25 0 014.5 20.25V19.5z" />
+                </svg>
+              </Link>
+            </li>
           ) : (
             <li>
               <button
@@ -89,10 +93,14 @@ const Header: React.FC = () => {
             <li><Link to="/dashboard" className="nav-link" onClick={toggleMenu}>Dashboard</Link></li>
             <li><Link to="/about" className="nav-link" onClick={toggleMenu}>About Us</Link></li>
             {!user ? (
-              <>
-                <li><Link to="/login" className="nav-link" onClick={toggleMenu}>Login</Link></li>
-                <li><Link to="/register" className="nav-link" onClick={toggleMenu}>Registro</Link></li>
-              </>
+              <li>
+                <Link to="/login" className="nav-link d-flex align-items-center" onClick={toggleMenu} title="Iniciar sesión">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 7.5a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5a7.5 7.5 0 1115 0v.75A2.25 2.25 0 0117.25 22.5h-10.5A2.25 2.25 0 014.5 20.25V19.5z" />
+                  </svg>
+                </Link>
+              </li>
             ) : (
               <li>
                 <button
