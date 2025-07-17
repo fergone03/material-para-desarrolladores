@@ -1,0 +1,36 @@
+/* Dark mode variables and overrides */
+body.dark {
+  --primary-color: #00bcd4;
+  --secondary-color: #263238;
+  --bs-primary: #00bcd4;
+  --footer-height: 60px;
+  background: #181a1b !important;
+  color: #f1f1f1 !important;
+}
+
+body.dark .page-card {
+  background: #222325;
+  color: #f1f1f1;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.4) !important;
+}
+
+body.dark .category-badge {
+  background: #263238;
+  color: #00bcd4;
+}
+
+body.dark .navbar {
+  background: #23272b !important;
+  color: #f1f1f1;
+}
+
+body.dark .dashboard-content {
+  background: #181a1b;
+}
+
+body.dark footer {
+  background: #23272b;
+  color: #f1f1f1;
+}
+
+/* Add more dark mode overrides as needed */
