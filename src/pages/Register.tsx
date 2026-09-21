@@ -20,7 +20,7 @@ export default function Register() {
     e.preventDefault();
 
     // Crear usuario con supabase auth
-    const { data: signUpData, error: signUpError } = await supabase.auth.signUp(
+    const { error: signUpError } = await supabase.auth.signUp(
       {
         email,
         password,
@@ -32,19 +32,7 @@ export default function Register() {
       return;
     }
 
-    // Insertar perfil con role 'user' en la tabla profiles
-    if (signUpData?.user) {
-      const { id } = signUpData.user;
-
-      const { error: profileError } = await supabase
-        .from("profiles")
-        .insert([{ id, username: email, role: "user" }]);
-
-      if (profileError) {
-        toast.error("Error creando perfil: " + profileError.message);
-        return;
-      }
-    }
+    // El perfil (role 'user') lo crea el trigger on_auth_user_created en la base.
 
     toast.success("Revisa tu correo para confirmar el registro");
     setTimeout(() => navigate('/dashboard'), 1000);

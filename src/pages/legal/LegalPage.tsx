@@ -4,7 +4,7 @@ import { Container } from 'react-bootstrap';
 // Datos del titular, comunes a las tres páginas legales.
 export const TITULAR = {
   nombre: 'Esteban Fernández González',
-  email: '',
+  email: 'fergonesteban03@gmail.com',
   sitio: 'https://consultorialocal.es/material-para-desarrolladores/',
   actualizado: '21 de septiembre de 2026',
 };
