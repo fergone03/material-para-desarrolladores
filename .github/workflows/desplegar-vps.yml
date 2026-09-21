@@ -1,0 +1,29 @@
+# Despliega en el VPS en cada push a main.
+# La clave VPS_SSH_KEY solo puede ejecutar /usr/local/bin/desplegar en el VPS
+# (forced command), que hace git reset a origin/main y el desplegar-vps.sh del repo.
+name: Desplegar en el VPS
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: desplegar-vps
+  cancel-in-progress: false
+
+jobs:
+  desplegar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Desplegar material-para-desarrolladores
+        env:
+          CLAVE: ${{ secrets.VPS_SSH_KEY }}
+          HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$CLAVE" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          printf '%s\n' "$HOSTS" > ~/.ssh/known_hosts
+          ssh ubuntu@152.228.138.193 material-para-desarrolladores

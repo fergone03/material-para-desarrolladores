@@ -15,13 +15,12 @@ Se sirve en `https://consultorialocal.es/material-para-desarrolladores/`, dentro
 
 Binarios: `/opt/material-para-desarrolladores/bin/{auth,postgrest}` (GoTrue v2.197.0, PostgREST v16.3).
 
-## Actualizar el frontend
+## Desplegar
 
-```sh
-cd /var/www/ctl/material-para-desarrolladores
-git pull --ff-only
-npm ci && npm run build   # usa .env.production.local (VITE_API_URL, VITE_API_KEY, VITE_BASE_PATH)
-```
+Automático en cada push a `main`: `.github/workflows/desplegar-vps.yml` llama por ssh a
+`/usr/local/bin/desplegar material-para-desarrolladores`, que hace `git reset --hard origin/main`
+y ejecuta [`desplegar-vps.sh`](desplegar-vps.sh) (`npm ci` + `npm run build`, con `.env.production.local`).
+También se puede lanzar a mano desde la pestaña Actions o en el VPS con `desplegar material-para-desarrolladores`.
 
 ## Nueva migración
 
