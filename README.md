@@ -287,10 +287,6 @@ Material para Desarrolladores es una aplicación web para gestionar y descubrir 
 		<summary><b>public</b></summary>
 		<blockquote>
 			<table>
-			<tr>
-				<td><b><a href='https://github.com/fergone03/material-para-desarrolladores/blob/master/public/_redirects'>_redirects</a></b></td>
-				<td>Netlify redirects configuration file for custom route handling and SPA support.</td>
-			</tr>
 			</table>
 		</blockquote>
 	</details>
