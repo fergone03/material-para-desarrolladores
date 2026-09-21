@@ -19,7 +19,8 @@ export default function Privacidad() {
       <ul>
         <li>
           <strong>Datos de tu cuenta:</strong> correo electrónico, que también se usa como nombre de usuario, y
-          contraseña. La contraseña se guarda cifrada con un hash (bcrypt) y nadie puede leerla.
+          contraseña. La contraseña se guarda cifrada con un hash (bcrypt) y nadie puede leerla. Tu correo se usa
+          solo para confirmar la cuenta y para recuperar la contraseña si lo pides.
         </li>
         <li>
           <strong>Contenido que creas:</strong> las páginas y categorías que guardas, con su fecha de creación.
@@ -56,7 +57,9 @@ export default function Privacidad() {
       <h2 className="h4 mt-4">5. Destinatarios</h2>
       <p>
         No se ceden datos a terceros salvo obligación legal. El sitio se aloja en un servidor de OVHcloud
-        (OVH SAS, Francia), que actúa como encargado del tratamiento. Los datos no salen de la Unión Europea.
+        (OVH SAS, Francia) y los correos de confirmación y recuperación de contraseña se envían mediante Brevo
+        (Sendinblue SAS, Francia). Ambos actúan como encargados del tratamiento. Los datos no salen de la Unión
+        Europea.
       </p>
 
       <h2 className="h4 mt-4">6. Tus derechos</h2>

@@ -9,6 +9,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import AboutUs from "./pages/AboutUs";
 import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import AvisoLegal from "./pages/legal/AvisoLegal";
 import Privacidad from "./pages/legal/Privacidad";
 import Cookies from "./pages/legal/Cookies";
@@ -34,6 +35,7 @@ function App() {
             />
             <Route path="/about" element={<AboutUs />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/aviso-legal" element={<AvisoLegal />} />
             <Route path="/privacidad" element={<Privacidad />} />
             <Route path="/cookies" element={<Cookies />} />

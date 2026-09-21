@@ -24,6 +24,9 @@ export default function Register() {
       {
         email,
         password,
+        options: {
+          emailRedirectTo: `${window.location.origin}${import.meta.env.BASE_URL}dashboard`,
+        },
       }
     );
 
@@ -35,7 +38,7 @@ export default function Register() {
     // El perfil (role 'user') lo crea el trigger on_auth_user_created en la base.
 
     toast.success("Revisa tu correo para confirmar el registro");
-    setTimeout(() => navigate('/dashboard'), 1000);
+    setTimeout(() => navigate('/login'), 2500);
   };
 
   // Validación de contraseña
