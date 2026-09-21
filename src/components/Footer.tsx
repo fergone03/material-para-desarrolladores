@@ -1,4 +1,5 @@
 import { Container } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
 import { FaGithub, FaLinkedin } from 'react-icons/fa';
 
@@ -11,8 +12,13 @@ const Footer = () => {
         <div className="mb-2 mb-md-0" style={{ fontFamily: 'Dancing Script, cursive', fontSize: 20 }}>
           <span style={{ color: '#00bcd4', fontWeight: 700 }}>Material para Desarrolladores</span> &copy; {currentYear}
         </div>
-        <div className="mb-2 mb-md-0 small text-muted">
+        <div className="mb-2 mb-md-0 small text-muted text-center">
           Comunidad abierta para compartir recursos y crecer juntos.
+          <div className="d-flex gap-3 justify-content-center mt-1">
+            <Link to="/aviso-legal" className="text-reset">Aviso legal</Link>
+            <Link to="/privacidad" className="text-reset">Privacidad</Link>
+            <Link to="/cookies" className="text-reset">Cookies</Link>
+          </div>
         </div>
         <div className="d-flex gap-3">
           <a href="https://github.com/fergone03/" target="_blank" rel="noopener noreferrer" style={{ color: '#fff', transition: 'color 0.2s' }}

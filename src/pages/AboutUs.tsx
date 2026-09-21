@@ -28,7 +28,7 @@ const AboutUs: React.FC = () => {
                 boxShadow: '0 4px 24px rgba(0,0,0,0.06)'
             }}>
                 <img
-                    src="https://placehold.co/220x220/"
+                    src="./team.jpg"
                     alt="Equipo desarrollador"
                     style={{ width: 220, height: 220, borderRadius: '50%', objectFit: 'cover', boxShadow: '0 2px 16px #008cba33', border: '6px solid #fff' }}
                 />

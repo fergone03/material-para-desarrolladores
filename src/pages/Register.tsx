@@ -11,6 +11,7 @@ export default function Register() {
   const [repeatPassword, setRepeatPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showRepeat, setShowRepeat] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   const [repeatTouched, setRepeatTouched] = useState(false);
   const navigate = useNavigate();
@@ -157,13 +158,27 @@ export default function Register() {
               </li>
             ))}
           </ul>
+          <div className="form-check mb-3" style={{ fontSize: 14 }}>
+            <input
+              id="acceptTerms"
+              type="checkbox"
+              className="form-check-input"
+              checked={acceptedTerms}
+              onChange={e => setAcceptedTerms(e.target.checked)}
+              required
+            />
+            <label htmlFor="acceptTerms" className="form-check-label">
+              He leído el <Link to="/aviso-legal" target="_blank">aviso legal</Link> y la{' '}
+              <Link to="/privacidad" target="_blank">política de privacidad</Link>, y tengo al menos 14 años.
+            </label>
+          </div>
           <button
             type="submit"
             className="btn w-100 py-2 fw-bold text-white"
-            style={{ background: isPasswordValid && passwordsMatch ? '#008cba' : '#bdbdbd', border: 'none', borderRadius: 50, fontSize: 18, letterSpacing: '0.02em', transition: 'background 0.2s' }}
-            disabled={!(isPasswordValid && passwordsMatch)}
-            onMouseOver={e => { if (isPasswordValid && passwordsMatch) e.currentTarget.style.background = '#0077a3'; }}
-            onMouseOut={e => { if (isPasswordValid && passwordsMatch) e.currentTarget.style.background = '#008cba'; }}
+            style={{ background: isPasswordValid && passwordsMatch && acceptedTerms ? '#008cba' : '#bdbdbd', border: 'none', borderRadius: 50, fontSize: 18, letterSpacing: '0.02em', transition: 'background 0.2s' }}
+            disabled={!(isPasswordValid && passwordsMatch && acceptedTerms)}
+            onMouseOver={e => { if (isPasswordValid && passwordsMatch && acceptedTerms) e.currentTarget.style.background = '#0077a3'; }}
+            onMouseOut={e => { if (isPasswordValid && passwordsMatch && acceptedTerms) e.currentTarget.style.background = '#008cba'; }}
           >
             Registrarse
           </button>

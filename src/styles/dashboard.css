@@ -43,8 +43,6 @@
   text-overflow: ellipsis;
 }
 
-@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@700&display=swap');
-
 /* Dashboard Layout */
 html, body, #root {
   height: 100%;

@@ -9,10 +9,13 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import AboutUs from "./pages/AboutUs";
 import ForgotPassword from "./pages/ForgotPassword";
+import AvisoLegal from "./pages/legal/AvisoLegal";
+import Privacidad from "./pages/legal/Privacidad";
+import Cookies from "./pages/legal/Cookies";
 
 function App() {
   return (
-    <Router>
+    <Router basename={import.meta.env.BASE_URL}>
       <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
         <Header/>
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
@@ -31,6 +34,9 @@ function App() {
             />
             <Route path="/about" element={<AboutUs />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/aviso-legal" element={<AvisoLegal />} />
+            <Route path="/privacidad" element={<Privacidad />} />
+            <Route path="/cookies" element={<Cookies />} />
           </Routes>
         </div>
         <Footer />
