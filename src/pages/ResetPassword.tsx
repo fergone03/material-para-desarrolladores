@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import supabase from '../utils/supabase';
+import api from '../utils/api';
 
-// Destino del enlace del correo de recuperación: supabase-js lee el token del
+// Destino del enlace del correo de recuperación: el cliente lee el token del
 // hash de la URL y abre una sesión temporal con la que se cambia la contraseña.
 export default function ResetPassword() {
   const [password, setPassword] = useState('');
@@ -14,8 +14,8 @@ export default function ResetPassword() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => setHasSession(!!data.session));
-    const { data } = supabase.auth.onAuthStateChange((event, session) => {
+    api.auth.getSession().then(({ data }) => setHasSession(!!data.session));
+    const { data } = api.auth.onAuthStateChange((event, session) => {
       if (event === 'PASSWORD_RECOVERY' || session) setHasSession(true);
     });
     return () => data.subscription.unsubscribe();
@@ -32,7 +32,7 @@ export default function ResetPassword() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
-    const { error } = await supabase.auth.updateUser({ password });
+    const { error } = await api.auth.updateUser({ password });
     setSaving(false);
     if (error) {
       toast.error(error.message);

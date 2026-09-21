@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import supabase from '../utils/supabase';
+import api from '../utils/api';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -12,7 +12,7 @@ export default function ForgotPassword() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSending(true);
-    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+    const { error } = await api.auth.resetPasswordForEmail(email.trim(), {
       redirectTo: `${window.location.origin}${import.meta.env.BASE_URL}reset-password`,
     });
     setSending(false);

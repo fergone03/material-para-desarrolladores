@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import supabase from "../utils/supabase";
+import api from "../utils/api";
 
 export default function Register() {
   const [email, setEmail] = useState("");
@@ -19,8 +19,8 @@ export default function Register() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Crear usuario con supabase auth
-    const { error: signUpError } = await supabase.auth.signUp(
+    // Crear usuario con api auth
+    const { error: signUpError } = await api.auth.signUp(
       {
         email,
         password,

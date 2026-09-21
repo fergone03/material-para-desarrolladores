@@ -26,7 +26,7 @@ export default function Cookies() {
           </thead>
           <tbody>
             <tr>
-              <td><code>sb-…-auth-token</code></td>
+              <td><code>mpd-auth</code></td>
               <td>Mantener tu sesión iniciada.</td>
               <td>Hasta que cierras sesión.</td>
             </tr>

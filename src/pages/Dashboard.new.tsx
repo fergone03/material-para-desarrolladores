@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import supabase from '../utils/supabase';
+import api from '../utils/api';
 import { Button, Form, Modal } from 'react-bootstrap';
 import { FaPlus } from 'react-icons/fa';
 import DashboardLayout from '../components/DashboardLayout';
@@ -31,7 +31,7 @@ const Dashboard = () => {
     if (!window.confirm('¿Seguro que quieres borrar esta categoría?')) return;
     try {
       // 1. Verificar si existen páginas asociadas a la categoría en 'pages'
-      const { count: countPages, error: countPagesError } = await supabase
+      const { count: countPages, error: countPagesError } = await api
         .from('pages')
         .select('id', { count: 'exact', head: true })
         .eq('category_id', categoryId);
@@ -41,7 +41,7 @@ const Dashboard = () => {
         return;
       }
       // 2. Verificar si existen páginas asociadas a la categoría en 'user_pages'
-      const { count: countUserPages, error: countUserPagesError } = await supabase
+      const { count: countUserPages, error: countUserPagesError } = await api
         .from('user_pages')
         .select('page_id', { count: 'exact', head: true })
         .eq('category_id', categoryId);
@@ -51,7 +51,7 @@ const Dashboard = () => {
         return;
       }
       // 3. Si no hay páginas asociadas, borrar la categoría
-      const { error } = await supabase
+      const { error } = await api
         .from('categories')
         .delete()
         .eq('id', categoryId);
@@ -77,7 +77,7 @@ const Dashboard = () => {
       return;
     }
     try {
-      const { error } = await supabase
+      const { error } = await api
         .from('categories')
         .update({ name: newName.trim() })
         .eq('id', categoryId);
@@ -100,7 +100,7 @@ const Dashboard = () => {
       return;
     }
     try {
-      const { error } = await supabase
+      const { error } = await api
         .from('categories')
         .insert([{ name: name.trim() }]);
       if (error) throw error;
@@ -141,7 +141,7 @@ const Dashboard = () => {
   }, [user]);
 
   const fetchCategories = async () => {
-    const { data, error } = await supabase
+    const { data, error } = await api
       .from("categories")
       .select("*")
       .order("name");
@@ -150,10 +150,10 @@ const Dashboard = () => {
   };
 
   const fetchUser = async () => {
-    const { data } = await supabase.auth.getUser();
+    const { data } = await api.auth.getUser();
     if (data.user) {
       setUser(data.user);
-      const { data: profileData } = await supabase
+      const { data: profileData } = await api
         .from("profiles")
         .select("role")
         .eq("id", data.user.id)
@@ -167,7 +167,7 @@ const Dashboard = () => {
     setLoading(true);
     try {
       // Fetch public pages
-      const { data: publicPages, error: publicError } = await supabase
+      const { data: publicPages, error: publicError } = await api
         .from("pages")
         .select("*, category:category_id(name)")
         .eq("is_common", true)
@@ -178,7 +178,7 @@ const Dashboard = () => {
       let userPages: Page[] = [];
       if (user) {
         // Fetch user's private pages
-        const { data: userPagesData, error: userPagesError } = await supabase
+        const { data: userPagesData, error: userPagesError } = await api
           .from("user_pages")
           .select(`page:page_id(*, category:category_id(name))`)
           .eq("user_id", user.id);
@@ -229,7 +229,7 @@ const Dashboard = () => {
 
       if (isCommon) {
         // Delete common page
-        const { error } = await supabase
+        const { error } = await api
           .from('pages')
           .delete()
           .eq('id', pageId);
@@ -237,7 +237,7 @@ const Dashboard = () => {
         if (error) throw error;
       } else if (user) {
         // Remove user-page association
-        const { error } = await supabase
+        const { error } = await api
           .from('user_pages')
           .delete()
           .eq('user_id', user.id)
@@ -273,7 +273,7 @@ const Dashboard = () => {
     if (editingPage) {
       console.log('Actualizando página existente...');
       // Update existing page
-      const { error } = await supabase
+      const { error } = await api
         .from('pages')
         .update(pageData)
         .eq('id', editingPage.id);
@@ -286,7 +286,7 @@ const Dashboard = () => {
     } else {
       console.log('Creando nueva página...');
       // Create new page
-      const { data, error } = await supabase
+      const { data, error } = await api
         .from('pages')
         .insert([pageData])
         .select();
@@ -301,7 +301,7 @@ const Dashboard = () => {
       // If it's a private page, create the user-page association
       if (!pageData.is_common && data?.[0]?.id) {
         console.log('Asociando página al usuario...');
-        const userPagesResult = await supabase
+        const userPagesResult = await api
           .from('user_pages')
           .insert([{
             user_id: user.id,

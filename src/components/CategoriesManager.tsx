@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import supabase from "../utils/supabase";
+import api from "../utils/api";
 
 type Category = { id: string; name: string };
 
@@ -14,7 +14,7 @@ export default function CategoriesManager() {
 
   const fetchCategories = async () => {
     setLoading(true);
-    const { data, error } = await supabase.from("categories").select("*").order("name");
+    const { data, error } = await api.from("categories").select("*").order("name");
     if (error) console.error(error);
     else setCategories(data || []);
     setLoading(false);
@@ -23,7 +23,7 @@ export default function CategoriesManager() {
   const handleAddCategory = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newCategoryName.trim()) return alert("Nombre no válido");
-    const { error } = await supabase.from("categories").insert([{ name: newCategoryName.trim() }]);
+    const { error } = await api.from("categories").insert([{ name: newCategoryName.trim() }]);
     if (error) alert(error.message);
     else {
       setNewCategoryName("");

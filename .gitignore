@@ -24,4 +24,5 @@ dist-ssr
 *.sw?
 
 # Dumps de la base de datos (contienen usuarios y hashes)
-supabase/backup/
+db/backup/
+.env

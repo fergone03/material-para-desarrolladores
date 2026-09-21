@@ -5,7 +5,7 @@ import {
   useState,
 } from "react";
 import type { ReactNode } from "react";
-import supabase from "../utils/supabase";
+import api from "../utils/api";
 
 type UserProfile = {
   id: string;
@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const {
       data: { user: sessionUser },
       error,
-    } = await supabase.auth.getUser();
+    } = await api.auth.getUser();
 
     // Gracefully handle no session
     if (!sessionUser) {
@@ -52,10 +52,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         error.message.toLowerCase().includes(msg.toLowerCase())
       )
     ) {
-      console.error("Supabase Auth Error:", error.message);
+      console.error("Auth Error:", error.message);
     }
 
-    const { data: profile, error: profileError } = await supabase
+    const { data: profile, error: profileError } = await api
       .from("profiles")
       .select("id, username, role")
       .eq("id", sessionUser.id)
@@ -74,7 +74,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     fetchUser();
 
-    const { data: authListener } = supabase.auth.onAuthStateChange(() => {
+    const { data: authListener } = api.auth.onAuthStateChange(() => {
       fetchUser();
     });
 
@@ -84,7 +84,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const logout = async () => {
-    const { error } = await supabase.auth.signOut();
+    const { error } = await api.auth.signOut();
     if (error) {
       alert("Error al cerrar sesión: " + error.message);
     } else {

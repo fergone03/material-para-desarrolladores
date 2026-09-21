@@ -45,7 +45,7 @@ Material para Desarrolladores es una aplicación web para gestionar y descubrir 
 - Responsive dashboard with modern UI and Bootstrap styling.
 - Dark mode toggle with persistent user preference and system theme detection.
 - Fast navigation and real-time updates using React and Vite.
-- Secure backend integration with Supabase.
+- Self-hosted backend: Postgres + GoTrue (auth) + PostgREST (API).
 - Accessible design for desktop and mobile devices.
 
 ---
@@ -226,7 +226,7 @@ Material para Desarrolladores es una aplicación web para gestionar y descubrir 
 					</tr>
 					<tr>
 						<td><b><a href='https://github.com/fergone03/material-para-desarrolladores/blob/master/src/pages/Login.tsx'>Login.tsx</a></b></td>
-						<td>Login form for user authentication, with validation and Supabase integration.</td>
+						<td>Login form for user authentication, with validation and API integration.</td>
 					</tr>
 					<tr>
 						<td><b><a href='https://github.com/fergone03/material-para-desarrolladores/blob/master/src/pages/ForgotPassword.tsx'>ForgotPassword.tsx</a></b></td>
@@ -275,8 +275,8 @@ Material para Desarrolladores es una aplicación web para gestionar y descubrir 
 				<blockquote>
 					<table>
 					<tr>
-						<td><b><a href='https://github.com/fergone03/material-para-desarrolladores/blob/master/src/utils/supabase.ts'>supabase.ts</a></b></td>
-						<td>Initializes and exports the Supabase client for database and authentication operations.</td>
+						<td><b><a href='https://github.com/fergone03/material-para-desarrolladores/blob/master/src/utils/api.ts'>api.ts</a></b></td>
+						<td>Initializes and exports the API client (auth and data).</td>
 					</tr>
 					</table>
 				</blockquote>
@@ -304,7 +304,7 @@ Material para Desarrolladores es una aplicación web para gestionar y descubrir 
 Before getting started with material-para-desarrolladores, ensure your runtime environment meets the following requirements:
 
 - **Programming Language:** TypeScript
-- **Framework:** React, Vite, Supabase, Bootstrap
+- **Framework:** React, Vite, Postgres, Bootstrap
 - **Package Manager:** Npm
 
 

@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { FaPlus } from 'react-icons/fa';
 import DashboardLayout from '../components/DashboardLayout';
 import Footer from '../components/Footer';
-import supabase from '../utils/supabase';
+import api from '../utils/api';
 import '../styles/dashboard.css';
 
 const Dashboard = () => {
@@ -71,7 +71,7 @@ const Dashboard = () => {
   // Fetch only common pages for guests
   const fetchCommonPages = async () => {
     setLoading(true);
-    const { data, error } = await supabase
+    const { data, error } = await api
       .from('pages')
       .select('*, category:categories(*)')
       .eq('is_common', true)
@@ -90,7 +90,7 @@ const Dashboard = () => {
   const notifyPageDeleted = () => toast.info('Página eliminada');
 
   const fetchCategories = async () => {
-    const { data, error } = await supabase
+    const { data, error } = await api
       .from("categories")
       .select("*")
       .order("name");
@@ -100,10 +100,10 @@ const Dashboard = () => {
 
   const fetchUser = async () => {
     try {
-      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      const { data: { user: currentUser } } = await api.auth.getUser();
       if (currentUser) {
         setUser(currentUser);
-        const { data: profileData } = await supabase
+        const { data: profileData } = await api
           .from("profiles")
           .select("role")
           .eq("id", currentUser.id)
@@ -121,7 +121,7 @@ const Dashboard = () => {
     setLoading(true);
     try {
       // Fetch public pages
-      const { data: publicPages, error: publicError } = await supabase
+      const { data: publicPages, error: publicError } = await api
         .from("pages")
         .select("*, category:category_id(name)")
         .eq("is_common", true)
@@ -132,7 +132,7 @@ const Dashboard = () => {
       let userPages = [];
       if (user) {
         // Fetch user's private pages
-        const { data: userPagesData, error: userPagesError } = await supabase
+        const { data: userPagesData, error: userPagesError } = await api
           .from("user_pages")
           .select(`page:page_id(*, category:category_id(name))`)
           .eq("user_id", user.id);
@@ -183,7 +183,7 @@ const Dashboard = () => {
 
       if (isCommon) {
         // Solo admins pueden eliminar páginas comunes
-        const { error } = await supabase
+        const { error } = await api
           .from('pages')
           .delete()
           .eq('id', pageId);
@@ -196,7 +196,7 @@ const Dashboard = () => {
         }
       } else if (user) {
         // Eliminar relación en user_pages
-        const { error: relationError } = await supabase
+        const { error: relationError } = await api
           .from('user_pages')
           .delete()
           .eq('user_id', user.id)
@@ -208,7 +208,7 @@ const Dashboard = () => {
         }
 
         // También eliminar la página privada del usuario
-        const { error: pageError } = await supabase
+        const { error: pageError } = await api
           .from('pages')
           .delete()
           .eq('id', pageId); // elimina la página sin importar el creador
@@ -245,7 +245,7 @@ const Dashboard = () => {
 
       if (editingPage) {
         // Update existing page
-        const { error } = await supabase
+        const { error } = await api
           .from('pages')
           .update(pageData)
           .eq('id', editingPage.id);
@@ -258,7 +258,7 @@ const Dashboard = () => {
         notifyPageEdited();
       } else {
         // Create new page
-        const { data, error } = await supabase
+        const { data, error } = await api
           .from('pages')
           .insert([pageData])
           .select();
@@ -270,7 +270,7 @@ const Dashboard = () => {
 
         // If it's a private page, create the user-page association
         if (!pageData.is_common && data?.[0]?.id) {
-          const { error: insertError } = await supabase
+          const { error: insertError } = await api
             .from('user_pages')
             .insert([{
               user_id: user.id,
@@ -396,17 +396,17 @@ const Dashboard = () => {
           loading={loading}
           role={role}
           onAddCategory={async (name) => {
-            const { data, error } = await supabase.from('categories').insert([{ name }]).select();
+            const { data, error } = await api.from('categories').insert([{ name }]).select();
             if (!error && data) setCategories(prev => [...prev, ...data]);
             return error;
           }}
           onEditCategory={async (id, newName) => {
-            const { error } = await supabase.from('categories').update({ name: newName }).eq('id', id);
+            const { error } = await api.from('categories').update({ name: newName }).eq('id', id);
             if (!error) setCategories(prev => prev.map(cat => cat.id === id ? { ...cat, name: newName } : cat));
             return error;
           }}
           onDeleteCategory={async (id) => {
-            const { error } = await supabase.from('categories').delete().eq('id', id);
+            const { error } = await api.from('categories').delete().eq('id', id);
             if (!error) setCategories(prev => prev.filter(cat => cat.id !== id));
             return error;
           }}

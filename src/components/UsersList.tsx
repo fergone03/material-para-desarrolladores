@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import supabase from '../utils/supabase'; 
+import api from '../utils/api'; 
 
 type UserProfile = {
   id: string;
@@ -18,7 +18,7 @@ const UsersList: React.FC = () => {
 
   const fetchUsers = async () => {
     setLoading(true);
-    const { data, error } = await supabase
+    const { data, error } = await api
       .from('profiles')
       .select('id, username, role')
       .order('username', { ascending: true });

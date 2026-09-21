@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import supabase from "../utils/supabase";
+import api from "../utils/api";
 import { Modal, Button } from 'react-bootstrap';
 
 type Category = {
@@ -61,7 +61,7 @@ const PublicPagesManager: React.FC<Props> = ({ showForm, setShowForm, onSave, pa
   }, []);
 
   const fetchCategories = async () => {
-    const { data, error } = await supabase
+    const { data, error } = await api
       .from("categories")
       .select("*")
       .order("name");

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import supabase from '../utils/supabase';
+import api from '../utils/api';
 
 
 
@@ -13,7 +13,7 @@ export default function FetchCategories() {
 
   async function fetchCategories() {
 
-    const { error } = await supabase
+    const { error } = await api
       .from('categories')
       .select('*')
       .order('name');

@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import  supabase from '../utils/supabase';
+import  api from '../utils/api';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -21,7 +21,7 @@ export default function Login() {
       toast.error('La contraseña es obligatoria');
       return;
     }
-    const { error } = await supabase.auth.signInWithPassword({
+    const { error } = await api.auth.signInWithPassword({
       email,
       password,
     });

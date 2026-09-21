@@ -1,4 +1,4 @@
--- Esquema de public, recreado a partir del proyecto de Supabase (2026-09-21).
+-- Esquema de public, recreado a partir del proyecto original (2026-09-21).
 -- Requiere el esquema auth de GoTrue y los roles anon/authenticated/service_role.
 
 create table public.categories (
@@ -33,7 +33,7 @@ create table public.user_pages (
   unique (user_id, page_id)
 );
 
--- Existía en Supabase sin trigger asociado: el perfil lo crea Register.tsx.
+-- Existía sin trigger asociado: el perfil lo crea Register.tsx.
 create or replace function public.handle_new_user()
 returns trigger
 language plpgsql
@@ -45,7 +45,7 @@ begin
 end;
 $$;
 
--- Igual que en Supabase: RLS desactivado y acceso completo para los roles de la API.
+-- Como en el proyecto original: RLS desactivado y acceso completo para los roles de la API.
 grant all on all tables in schema public to anon, authenticated, service_role;
 grant all on all functions in schema public to anon, authenticated, service_role;
 alter default privileges in schema public grant all on tables to anon, authenticated, service_role;
