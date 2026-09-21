@@ -1,0 +1,21 @@
+# Auth (GoTrue) de consultorialocal.es/material-para-desarrolladores
+# Escucha en 127.0.0.1:9999; nginx lo expone en /material-para-desarrolladores/api/auth/v1/.
+[Unit]
+Description=GoTrue - auth de material-para-desarrolladores
+After=network.target postgresql.service
+
+[Service]
+User=www-data
+Group=www-data
+EnvironmentFile=/etc/material-para-desarrolladores/auth.env
+ExecStartPre=/opt/material-para-desarrolladores/bin/auth migrate
+ExecStart=/opt/material-para-desarrolladores/bin/auth serve
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target
